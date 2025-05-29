@@ -1,163 +1,255 @@
-BlipCXGateway
+# BlipCXGateway
+
 O BlipCXGateway é um servidor Node.js que atua como um proxy entre a plataforma Blip e um agente do Google Dialogflow CX. Ele gerencia a autenticação com o Google Cloud (usando uma conta de serviço e JWTs para obter tokens de acesso OAuth 2.0) e encaminha as mensagens do usuário do Blip para o agente Dialogflow CX, retornando a resposta do agente.
 
 Este projeto inclui um mecanismo de cache para os tokens de acesso do Google, otimizando as chamadas e melhorando a eficiência.
 
-Funcionalidades Principais
-Proxy para encaminhamento de mensagens do Blip para o Dialogflow CX.
+## Funcionalidades Principais
 
-Autenticação automática com a API do Google Dialogflow CX usando uma conta de serviço.
+* Proxy para encaminhamento de mensagens do Blip para o Dialogflow CX.
+* Autenticação automática com a API do Google Dialogflow CX usando uma conta de serviço.
+* Geração e assinatura de JWTs para obtenção de tokens de acesso OAuth 2.0.
+* Cache inteligente de tokens de acesso para evitar requisições desnecessárias.
+* Endpoint HTTP simples para integração com a ação "Requisição HTTP" do Blip.
+* Configurável para diferentes projetos, localizações e agentes do Dialogflow CX.
+* Logs detalhados para depuração.
 
-Geração e assinatura de JWTs para obtenção de tokens de acesso OAuth 2.0.
+## Tecnologias Utilizadas
 
-Cache inteligente de tokens de acesso para evitar requisições desnecessárias.
+* [Node.js](https://nodejs.org/)
+* [Express.js](https://expressjs.com/)
+* [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken#readme)
+* [axios](https://axios-http.com/)
 
-Endpoint HTTP simples para integração com a ação "Requisição HTTP" do Blip.
+## Pré-requisitos
 
-Configurável para diferentes projetos, localizações e agentes do Dialogflow CX.
+* Node.js (v16.x ou superior recomendado).
+* NPM (geralmente instalado com o Node.js).
+* Uma **Conta de Serviço Google Cloud** com as seguintes permissões para o projeto do seu agente Dialogflow CX:
+    * `Dialogflow API User` (Cliente da API do Dialogflow) ou `roles/dialogflow.apiClient`.
+    * Você precisará do arquivo JSON da chave desta conta de serviço. (Veja a seção "Como obter o arquivo JSON da chave da Conta de Serviço" na [Documentação da API](LINK_PARA_DOCUMENTACAO_COMPLETA_SE_HOUVER_OU_REMOVA_ESTE_LINK)).
+* Um **Agente Dialogflow CX** já configurado e treinado.
 
-Tecnologias Utilizadas
-Node.js
+## Configuração
 
-Express.js
+1.  **Clone o Repositório (se aplicável):**
+    ```bash
+    git clone <url-do-seu-repositorio>
+    cd BlipCXGateway
+    ```
 
-jsonwebtoken
+2.  **Arquivo de Credenciais Google:**
+    * Obtenha o arquivo JSON da chave da sua Conta de Serviço Google (instruções na documentação completa ou [aqui](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating)).
+    * Renomeie o arquivo JSON baixado para `google-service-account.json` (ou o nome que preferir) e coloque-o na **raiz do projeto**.
+    * **IMPORTANTE:** Adicione o nome deste arquivo ao seu `.gitignore` para evitar versioná-lo!
+        ```
+        # .gitignore
+        node_modules/
+        google-service-account.json
+        *.log
+        ```
+    * No arquivo `app.js`, atualize a linha que carrega as credenciais, se você usou um nome diferente para o arquivo JSON:
+        ```javascript
+        const serviceAccount = require('./google-service-account.json'); // Ajuste este caminho/nome se necessário
+        ```
 
-axios
+3.  **Configurações do Agente Dialogflow CX:**
+    * Abra o arquivo `app.js`.
+    * Modifique as seguintes constantes com os detalhes **do seu agente Dialogflow CX específico**:
+        ```javascript
+        // Detalhes do seu Agente Dialogflow CX
+        const PROJECT_ID = 'seu-gcp-project-id'; 
+        const LOCATION_ID = 'regiao-do-seu-agente'; // ex: us-central1
+        const AGENT_ID = 'id-do-seu-agente-cx'; 
+        const LANGUAGE_CODE = 'idioma-do-agente';   // ex: pt-BR
+        const DEFAULT_TIMEZONE = 'America/Sao_Paulo'; // Fuso horário padrão para o Dialogflow
+        ```
 
-Pré-requisitos
-Node.js (v16.x ou superior recomendado).
+4.  **Porta do Servidor (Opcional):**
+    * A porta padrão é `3000`. Se precisar alterá-la, modifique a constante `PORT` em `app.js` ou defina a variável de ambiente `PORT`.
 
-NPM (geralmente instalado com o Node.js).
 
-Uma Conta de Serviço Google Cloud com as seguintes permissões para o projeto do seu agente Dialogflow CX:
+# Documentação da API: BlipCXGateway
 
-Dialogflow API User (Cliente da API do Dialogflow) ou similar.
+**Versão:** 1.0.0  
+**Data:** 28 de maio de 2025
 
-Você precisará do arquivo JSON da chave desta conta de serviço.
+## 1. Introdução
+O BlipCXGateway é um servidor Node.js que atua como um proxy entre a plataforma Blip e um agente do Google Dialogflow CX. Sua principal função é facilitar a comunicação, gerenciando a autenticação (obtenção de tokens de acesso OAuth 2.0 usando uma conta de serviço Google) e encaminhando as mensagens do usuário do Blip para o agente Dialogflow CX, retornando a resposta do agente para o Blip.
 
-Um Agente Dialogflow CX já configurado e treinado.
+Esta API implementa um cache para os tokens de acesso, otimizando as chamadas e evitando a geração de um novo token a cada requisição.
 
-Configuração
-Clone o Repositório:
+## 2. Pré-requisitos
+Antes de configurar e rodar esta API, certifique-se de que você possui:
 
-git clone <url-do-seu-repositorio>
-cd BlipCXGateway 
+### Node.js
+Versão 16.x ou superior recomendada.
 
-Arquivo de Credenciais Google:
+### Conta de Serviço Google Cloud
 
-Obtenha o arquivo JSON da chave da sua Conta de Serviço Google.
+- Um arquivo JSON de chave da conta de serviço.
+- Esta conta de serviço deve ter as permissões necessárias para interagir com a API do Dialogflow (ex: papel "Cliente da API do Dialogflow" ou "Dialogflow API User").
 
-Renomeie-o para google-service-account.json (ou o nome que preferir) e coloque-o na raiz do projeto.
+**Como obter o arquivo JSON da chave da Conta de Serviço:**
 
-IMPORTANTE: Adicione o nome deste arquivo ao seu .gitignore para evitar versioná-lo! Ex:
+1. Acesse o Console do Google Cloud: Vá para [https://console.cloud.google.com/](https://console.cloud.google.com/).
+2. Selecione o seu projeto.
+3. Navegue para "IAM e administrador" > "Contas de serviço".
+4. Crie uma nova conta de serviço ou use uma existente.
+5. Gere uma nova chave JSON.
 
-# .gitignore
-node_modules/
-google-service-account.json 
-*.log
+**Agente Dialogflow CX Configurado:**
 
-No arquivo app.js, atualize a linha que carrega as credenciais, se você usou um nome diferente:
+- Project ID do Google Cloud.
+- Location ID (Região) do agente (ex: us-central1).
+- Agent ID do seu agente Dialogflow CX.
+- Idioma padrão do agente (ex: pt-BR).
 
-const serviceAccount = require('./google-service-account.json'); 
+### NPM ou Yarn
+Para gerenciamento de pacotes Node.js.
 
-Configurações do Agente Dialogflow CX:
+## 3. Configuração
 
-Abra o arquivo app.js.
+### 3.1. Arquivo de Credenciais da Conta de Serviço
+Renomeie seu arquivo JSON de chave da conta de serviço para um nome previsível, ex: `google-service-account.json`.  
+Coloque este arquivo na raiz do projeto.  
 
-Modifique as seguintes constantes com os detalhes do seu agente:
+**Importante:** NUNCA versione este arquivo em repositórios públicos.
 
-const PROJECT_ID = 'seu-gcp-project-id'; 
-const LOCATION_ID = 'regiao-do-seu-agente'; // ex: us-central1
-const AGENT_ID = 'id-do-seu-agente-cx'; 
-const LANGUAGE_CODE = 'idioma-do-agente';   // ex: pt-BR
-const DEFAULT_TIMEZONE = 'America/Sao_Paulo'; // Fuso horário padrão
+### 3.2. Constantes da Aplicação
 
-Porta do Servidor (Opcional):
+```javascript
+const PROJECT_ID = 'seu-project-id';
+const LOCATION_ID = 'sua-location-id';    // Ex: us-central1
+const AGENT_ID = 'seu-agent-id';         // ID do seu agente
+const LANGUAGE_CODE = 'seu-language-code'; // Ex: pt-BR
+const DEFAULT_TIMEZONE = 'America/Sao_Paulo';
+```
 
-A porta padrão é 3000. Se precisar alterá-la, modifique a constante PORT em app.js ou defina a variável de ambiente PORT.
+### 3.3. Porta do Servidor
 
-Instalação
-No diretório raiz do projeto, instale as dependências:
+```javascript
+const PORT = process.env.PORT || 3000;
+```
 
-npm install
+## 4. Instalação de Dependências
 
-Rodando o Projeto
-Para iniciar o servidor:
+```bash
+npm install express jsonwebtoken axios
+```
 
+## 5. Como Rodar o Servidor
+
+```bash
 node app.js
+```
 
-Ou, se você adicionar um script start ao seu package.json:
+(Substitua `app.js` pelo nome do seu arquivo principal).
 
-// package.json
+## 6. Endpoint da API
+
+### POST `/blip-webhook`
+
+Este endpoint recebe a mensagem do usuário e um ID de sessão do Blip, encaminha para o Dialogflow CX e retorna a resposta do agente.
+
+### 6.1. Cabeçalhos da Requisição
+
+| Cabeçalho       | Valor              | Descrição                            |
+|-----------------|--------------------|--------------------------------------|
+| Content-Type    | application/json   | Indica que o corpo é um JSON.        |
+
+### 6.2. Corpo da Requisição
+
+```json
 {
-  "scripts": {
-    "start": "node app.js"
-  }
+  "sessionId": "string_unica_por_conversa",
+  "userMessage": "mensagem_do_usuario_aqui",
+  "timeZone": "Fuso_Horario_Opcional"
 }
+```
 
-Então você pode rodar com:
+### Exemplo:
 
-npm start
-
-O servidor estará escutando na porta configurada (padrão: 3000).
-
-Uso (Integração com Blip)
-No seu fluxo do Blip, use uma ação de "Requisição HTTP" com as seguintes configurações:
-
-Método: POST
-
-URL: http://SEU_SERVIDOR_IP_OU_DOMINIO:PORTA/blip-webhook
-
-Exemplo local: http://localhost:3000/blip-webhook
-
-Cabeçalhos (Headers):
-
-Content-Type: application/json
-
-Corpo da Requisição (Body - tipo JSON):
-
+```json
 {
-  "sessionId": "{{contact.identity}}", 
-  "userMessage": "{{input.content}}",
-  "timeZone": "America/Sao_Paulo" // Opcional, mas recomendado
+  "sessionId": "blip-contact-12345-xyz",
+  "userMessage": "Gostaria de saber o saldo do meu cartão.",
+  "timeZone": "America/Recife"
 }
+```
 
-(Ajuste as variáveis {{...}} conforme as variáveis disponíveis no seu contexto do Blip).
+### 6.3. Resposta de Sucesso
 
-Salvar Resposta:
-
-Salve o corpo da resposta em uma variável (ex: apiResponse).
-
-A resposta do agente estará em {{apiResponse@reply}}.
-
-Testando com Postman
-Método: POST
-
-URL: http://localhost:3000/blip-webhook
-
-Headers:
-
-Content-Type: application/json
-
-Body (raw, JSON):
-
+```json
 {
-  "sessionId": "postman-test-001",
-  "userMessage": "Olá, tudo bem?",
-  "timeZone": "America/New_York"
+  "reply": "texto_da_resposta_do_agente"
 }
+```
 
-Estrutura do Projeto (Simplificada)
-BlipCXGateway/
-├── app.js                     # Lógica principal do servidor e API
-├── google-service-account.json # SEU ARQUIVO DE CREDENCIAIS (NÃO VERSIONE!)
-├── package.json               # Dependências e scripts do projeto
-├── package-lock.json          # Lock das dependências
-└── README.md                  # Este arquivo
+### Exemplo:
 
-Contribuição
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
+```json
+{
+  "reply": "Claro! Para verificar o saldo, por favor, me informe os últimos 4 dígitos do seu cartão."
+}
+```
 
-Licença
-Este projeto é distribuído sob a licença MIT. Veja o arquivo LICENSE para mais detalhes (se você adicionar um).
+### 6.4. Respostas de Erro
+
+**400 Bad Request:** Parâmetros inválidos.
+
+```json
+{
+  "error": "Parâmetros inválidos.",
+  "details": "É necessário fornecer \"sessionId\" e \"userMessage\" no corpo da requisição."
+}
+```
+
+**500 Internal Server Error:** Falha interna.
+
+```json
+{
+  "error": "Erro interno do servidor ao processar a mensagem.",
+  "details": "Falha ao obter access token do Google."
+}
+```
+
+## 7. Lógica Interna Principal
+
+### 7.1. Cache de Token de Acesso
+- Token é armazenado em memória.
+- Renovação automática antes do vencimento.
+
+### 7.2. Comunicação com Dialogflow CX
+- Constrói requisição `detectIntent`.
+- Envia e processa a resposta.
+- Retorna texto consolidado ao Blip.
+
+## 8. Considerações de Segurança
+
+- **Chave da Conta de Serviço:** mantenha segura e fora do Git.
+- **Proteção do Endpoint:** considere autenticação extra.
+
+## 9. Como Testar
+
+Use o **Postman**:
+
+- Método: POST
+- URL: `http://localhost:3000/blip-webhook`
+- Headers: `Content-Type: application/json`
+- Body:
+
+```json
+{
+  "sessionId": "teste-postman-001",
+  "userMessage": "Olá, como você está?",
+  "timeZone": "America/Sao_Paulo"
+}
+```
+
+## 10. Sugestões de Hospedagem
+
+- **Render**: plano gratuito.
+- **Fly.io**: Docker + cota grátis.
+- **Vercel / Netlify**: Functions serverless.
+- **Google Cloud Run**: Always Free Tier.
