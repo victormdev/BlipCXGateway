@@ -1,8 +1,8 @@
-# BlipCXGateway
+# BlipVertexAI
 
 Decidi criar esse repositório pra ajudar outros desenvolvedores, pois não existe nenhuma documentação na internet com essa estrutura.
 
-O BlipCXGateway é um servidor Node.js que atua como um proxy entre a plataforma Blip e um agente do Google Dialogflow CX. Ele gerencia a autenticação com o Google Cloud (usando uma conta de serviço e JWTs para obter tokens de acesso OAuth 2.0) e encaminha as mensagens do usuário do Blip para o agente Dialogflow CX, retornando a resposta do agente.
+O BlipVertexAI é um servidor Node.js que atua como um proxy entre a plataforma Blip e um agente do Google Dialogflow CX. Ele gerencia a autenticação com o Google Cloud (usando uma conta de serviço e JWTs para obter tokens de acesso OAuth 2.0) e encaminha as mensagens do usuário do Blip para o agente Dialogflow CX, retornando a resposta do agente.
 
 Este projeto inclui um mecanismo de cache para os tokens de acesso do Google, otimizando as chamadas e melhorando a eficiência.
 
