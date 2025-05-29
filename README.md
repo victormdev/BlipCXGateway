@@ -37,7 +37,7 @@ Este projeto inclui um mecanismo de cache para os tokens de acesso do Google, ot
 1.  **Clone o Repositório (se aplicável):**
     ```bash
     git clone <url-do-seu-repositorio>
-    cd BlipCXGateway
+    cd BlipDialog
     ```
 
 2.  **Arquivo de Credenciais Google:**
@@ -71,13 +71,13 @@ Este projeto inclui um mecanismo de cache para os tokens de acesso do Google, ot
     * A porta padrão é `3000`. Se precisar alterá-la, modifique a constante `PORT` em `app.js` ou defina a variável de ambiente `PORT`.
 
 
-# Documentação da API: BlipCXGateway
+# Documentação da API: CXGateway
 
 **Versão:** 1.0.0  
 **Data:** 28 de maio de 2025
 
 ## 1. Introdução
-O BlipCXGateway é um servidor Node.js que atua como um proxy entre a plataforma Blip e um agente do Google Dialogflow CX. Sua principal função é facilitar a comunicação, gerenciando a autenticação (obtenção de tokens de acesso OAuth 2.0 usando uma conta de serviço Google) e encaminhando as mensagens do usuário do Blip para o agente Dialogflow CX, retornando a resposta do agente para o Blip.
+O BlipDialog é um servidor Node.js que atua como um proxy entre a plataforma Blip e um agente do Google Dialogflow CX. Sua principal função é facilitar a comunicação, gerenciando a autenticação (obtenção de tokens de acesso OAuth 2.0 usando uma conta de serviço Google) e encaminhando as mensagens do usuário do Blip para o agente Dialogflow CX, retornando a resposta do agente para o Blip.
 
 Esta API implementa um cache para os tokens de acesso, otimizando as chamadas e evitando a geração de um novo token a cada requisição.
 
