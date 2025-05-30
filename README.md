@@ -71,7 +71,7 @@ Este projeto inclui um mecanismo de cache para os tokens de acesso do Google, ot
     * A porta padrão é `3000`. Se precisar alterá-la, modifique a constante `PORT` em `app.js` ou defina a variável de ambiente `PORT`.
 
 
-# Documentação da API: CXGateway
+# Documentação da API: BlipDialog
 
 **Versão:** 1.0.0  
 **Data:** 28 de maio de 2025
