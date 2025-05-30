@@ -29,7 +29,7 @@ Este projeto inclui um mecanismo de cache para os tokens de acesso do Google, ot
 * NPM (geralmente instalado com o Node.js).
 * Uma **Conta de Serviço Google Cloud** com as seguintes permissões para o projeto do seu agente Dialogflow CX:
     * `Dialogflow API User` (Cliente da API do Dialogflow) ou `roles/dialogflow.apiClient`.
-    * Você precisará do arquivo JSON da chave desta conta de serviço. (Veja a seção "Como obter o arquivo JSON da chave da Conta de Serviço" na [Documentação da API](LINK_PARA_DOCUMENTACAO_COMPLETA_SE_HOUVER_OU_REMOVA_ESTE_LINK)).
+    * Você precisará do arquivo JSON da chave desta conta de serviço. (Veja a seção "Como obter o arquivo JSON da chave da Conta de Serviço" na [Documentação da API]()).
 * Um **Agente Dialogflow CX** já configurado e treinado.
 
 ## Configuração
